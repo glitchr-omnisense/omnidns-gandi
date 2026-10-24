@@ -1,0 +1,44 @@
+{
+    "name": "omnidns/gandi",
+    "type": "library",
+    "description": "Omnidns's Gandi, under any PHP host: whether a domain is free and its price, registering and renewing it, the account's domains and their terms, their name servers, and LiveDNS records - Gandi's API v5 with a personal access token, on the application's HTTP client.",
+    "keywords": ["dns", "domain", "registrar", "gandi", "livedns", "dns-records", "framework-agnostic", "omnidns"],
+    "homepage": "https://github.com/glitchr-studio/omnidns-gandi",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Marco Meyer",
+            "email": "marco.meyer@glitchr.io"
+        }
+    ],
+    "require": {
+        "php": ">=8.2",
+        "omniscient/omnidns": "^1.0@dev",
+        "symfony/http-client-contracts": "^3.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^11.0",
+        "symfony/http-client": "^6.4|^7.0|^8.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Omnidns\\Gandi\\": ""
+        },
+        "exclude-from-classmap": [
+            "/Tests/"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Omnidns\\Gandi\\Tests\\": "Tests/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-1.x": "1.x-dev"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
