@@ -3,7 +3,7 @@
     "type": "library",
     "description": "Omnidns's Gandi, under any PHP host: whether a domain is free and its price, registering and renewing it, the account's domains and their terms, their name servers, and LiveDNS records - Gandi's API v5 with a personal access token, on the application's HTTP client.",
     "keywords": ["dns", "domain", "registrar", "gandi", "livedns", "dns-records", "framework-agnostic", "omnidns"],
-    "homepage": "https://github.com/glitchr-studio/omnidns-gandi",
+    "homepage": "https://github.com/glitchr-omnisense/omnidns-gandi",
     "license": "MIT",
     "authors": [
         {
@@ -13,7 +13,7 @@
     ],
     "require": {
         "php": ">=8.2",
-        "omniscient/omnidns": "^1.0@dev",
+        "omnisense/omnidns": "^1.0@dev",
         "symfony/http-client-contracts": "^3.0"
     },
     "require-dev": {

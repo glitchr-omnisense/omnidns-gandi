@@ -1,6 +1,6 @@
 # omnidns/gandi
 
-Gandi for [omniscient/omnidns](https://github.com/glitchr-studio/omnidns), under any PHP host:
+Gandi for [omnisense/omnidns](https://github.com/glitchr-omnisense/omnidns), under any PHP host:
 whether a domain is free and its price, registering and renewing it, the account's domains and
 their terms, their name servers, and LiveDNS records - Gandi's API v5, on the application's HTTP
 client (any `symfony/http-client-contracts` implementation).

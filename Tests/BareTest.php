@@ -8,13 +8,13 @@ use PHPUnit\Framework\TestCase;
 /**
  * omnidns/gandi with no framework: every class of the package loaded in a PHP
  * process of its own, with nothing from outside but what it requires -
- * omniscient/omnidns and Symfony's HTTP client contracts (interfaces only): no framework, no other HTTP client, no application, even
+ * omnisense/omnidns and Symfony's HTTP client contracts (interfaces only): no framework, no other HTTP client, no application, even
  * in the harness where they are installed beside it.
  */
 final class BareTest extends TestCase
 {
     private const FOREIGN = '~^(?:Symfony\\\\(?!Contracts\\\\HttpClient\\\\|Polyfill\\\\)|(?:Illuminate|Laravel|Doctrine|Twig|League|Nyholm|Omnibridge|Base|App|League|GuzzleHttp|Http)\\\\)~';
-    private const ALLOWED_FILES = '~/vendor/(?:omniscient/omnidns|symfony/http-client-contracts|composer)/|/vendor/autoload\.php$|^/omnidns/(?:core|plugins/gandi)/~';
+    private const ALLOWED_FILES = '~/vendor/(?:omnisense/omnidns|symfony/http-client-contracts|composer)/|/vendor/autoload\.php$|^/omnidns/(?:core|plugins/gandi)/~';
 
     public function testEveryClassLoadsWithTheRequiredPackagesAlone(): void
     {
