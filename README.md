@@ -39,8 +39,17 @@ handful of calls on the application's client.
 ## Terms
 
 Gandi's [terms of service](https://www.gandi.net/en/contracts/terms-of-service) and its
-[API reference](https://api.gandi.net/docs/reference/) (rate limited per token: cache what you
-read). A registration or a renewal is a purchase from Gandi.
+[API reference](https://api.gandi.net/docs/reference/) (1,000 requests a minute per source
+address: cache what you read). A registration or a renewal is a purchase from Gandi.
+
+## Usage policy
+
+`policy.json` (omnisense/contracts' schema, read on 2026-11-10, `GandiProvider::POLICY`): 1,000
+requests a minute (the API reference: per source address; counted here for the whole application).
+Commercial use, caching and storage: unknown, the API's terms not read for them.
+A key is required. Through omnidns's registry each call is checked against it and counted, a 429
+and its Retry-After hold every next call (`UsageLimitReachedException`); a site may tighten it
+(`policy`), never loosen it. See the core's [usage policies](https://github.com/glitchr-omnisense/omnidns/blob/1.x/docs/policies.md).
 
 ## Verified, and not
 

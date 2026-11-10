@@ -37,6 +37,6 @@ final class GandiFactory extends ProviderFactory
 
     protected function build(Config $c): ProviderInterface
     {
-        return new GandiProvider($this->http, (string) $c->string('token'), $c->string('sharing_id'), $c->string('endpoint') ?? GandiProvider::ENDPOINT, $c->bool('dry_run'));
+        return new GandiProvider($this->http, (string) $c->string('token'), $c->string('sharing_id'), $c->string('endpoint') ?? GandiProvider::ENDPOINT, $c->bool('dry_run'), $c->backoff());
     }
 }

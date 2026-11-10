@@ -1,0 +1,45 @@
+{
+    "$schema": "https://github.com/glitchr-omnisense/contracts/blob/1.x/resources/usage-policy.schema.json",
+    "provider": "gandi",
+    "rateLimits": [
+        {
+            "max": 1000,
+            "window": "minute",
+            "scope": "application",
+            "operations": [],
+            "note": "\"1000 requests per minute from the same IP address\" (API reference): counted for the whole application, the stricter form when it runs on several addresses."
+        }
+    ],
+    "rights": {
+        "commercial": "unknown",
+        "openSourceRequired": null,
+        "caching": {
+            "permission": "unknown",
+            "maxTtl": null
+        },
+        "storage": "unknown",
+        "redistribution": "unknown",
+        "attribution": {
+            "required": false,
+            "text": null,
+            "url": null,
+            "where": []
+        },
+        "licence": null
+    },
+    "requirements": {
+        "key": true,
+        "userAgent": {
+            "required": false,
+            "pattern": null
+        }
+    },
+    "provenance": {
+        "terms": "https://www.gandi.net/en/contracts/terms-of-service",
+        "policy": "https://api.gandi.net/docs/reference/",
+        "verifiedAt": "2026-11-10",
+        "declaredBy": "maintainer",
+        "contact": null,
+        "notes": "The API reference (read 2026-11-10) gives 1,000 requests per minute per source IP and no status or header for it; a 429 and its Retry-After are honoured when Gandi sends them. The contracts page lists the General Terms (MSA 2020.1.1), the Reseller contract and the OAuth 2.0 special conditions as PDFs; none of them is read here for an API usage clause, so commercial use, caching and storage are unknown. A personal access token is required. The sandbox (api.sandbox.gandi.net) is a separate account."
+    }
+}

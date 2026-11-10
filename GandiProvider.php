@@ -18,6 +18,9 @@ use Omnidns\Model\Order;
 use Omnidns\Model\Record;
 use Omnidns\NameserversInterface;
 use Omnidns\RegistrarInterface;
+use Omnisense\Contracts\Policy\Backoff;
+use Omnisense\Contracts\Policy\DeclaresUsagePolicyInterface;
+use Omnisense\Contracts\Policy\UsagePolicy;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 /**
@@ -27,8 +30,13 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
  * it, known by its name, type and content (Gandi gives no id); adding one
  * extends its rrset, deleting the last one removes it.
  */
-final class GandiProvider implements AvailabilityInterface, RegistrarInterface, DomainsInterface, NameserversInterface, DnsInterface
+final class GandiProvider implements AvailabilityInterface, RegistrarInterface, DomainsInterface, NameserversInterface, DnsInterface, DeclaresUsagePolicyInterface
 {
+    /** Gandi's usage policy, as its terms read on the day it says (provenance.verifiedAt). */
+    public const POLICY = __DIR__.'/policy.json';
+
+    private static ?UsagePolicy $policy = null;
+
     public const ENDPOINT = 'https://api.gandi.net/v5';
 
     public function __construct(
@@ -37,6 +45,7 @@ final class GandiProvider implements AvailabilityInterface, RegistrarInterface, 
         private readonly ?string $sharingId = null,
         private readonly string $endpoint = self::ENDPOINT,
         private readonly bool $dryRun = false,
+        private readonly ?Backoff $backoff = null,
     ) {
     }
 
@@ -50,12 +59,17 @@ final class GandiProvider implements AvailabilityInterface, RegistrarInterface, 
         return 'Gandi';
     }
 
+    public function usagePolicy(): UsagePolicy
+    {
+        return self::$policy ??= UsagePolicy::fromFile(self::POLICY);
+    }
+
     public function capabilities(): Capabilities
     {
         return new Capabilities(true, true, true, true, true, Record::TYPES, [
             'https://www.gandi.net/en/contracts/terms-of-service',
             'https://api.gandi.net/docs/reference/',
-        ]);
+        ], $this->usagePolicy());
     }
 
     public function check(string $domain): Availability
@@ -274,7 +288,7 @@ final class GandiProvider implements AvailabilityInterface, RegistrarInterface, 
             $options['query'] = (\is_array($options['query'] ?? null) ? $options['query'] : []) + ['sharing_id' => $this->sharingId];
         }
         try {
-            return Json::request($this->http, $method, rtrim($this->endpoint, '/').$path, ['headers' => $headers] + $options, 'Gandi', $what);
+            return Json::request($this->http, $method, rtrim($this->endpoint, '/').$path, ['headers' => $headers] + $options, 'Gandi', $what, $this->backoff);
         } catch (ProviderException $e) {
             if ($allowMissing && 404 === $e->getCode()) {
                 return null;
