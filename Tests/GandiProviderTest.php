@@ -9,6 +9,10 @@ use Omnidns\Gandi\GandiProvider;
 use Omnidns\Model\Contact;
 use Omnidns\Model\Record;
 use Omnidns\Registry;
+use Omnidns\Exception\UsageLimitReachedException;
+use Omnisense\Contracts\Policy\PolicyGuard;
+use Omnisense\Contracts\Policy\RateLimit;
+use Omnisense\Contracts\Policy\UsagePolicy;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -169,6 +173,21 @@ final class GandiProviderTest extends TestCase
             ['rrset_name' => '@', 'rrset_type' => 'TXT', 'rrset_ttl' => 10800, 'rrset_values' => ['"v=spf1 include:_mailcust.gandi.net ?all"'], 'rrset_href' => 'https://api.gandi.net/v5/livedns/domains/example.fr/records/%40/TXT'],
             ['rrset_name' => 'webmail', 'rrset_type' => 'ALIAS', 'rrset_ttl' => 10800, 'rrset_values' => ['webmail.gandi.net.'], 'rrset_href' => 'https://api.gandi.net/v5/livedns/domains/example.fr/records/webmail/ALIAS'],
         ];
+    }
+
+    public function testEachPageAfterTheFirstIsCounted(): void
+    {
+        $guard = new PolicyGuard(UsagePolicy::builder('gandi')->limit(RateLimit::perDay(0, 'domains'))->build(), exception: UsageLimitReachedException::class);
+        $this->router = new Router(['GET /domain/domains?page=1&per_page=100' => array_map(static fn (int $i) => ['fqdn' => "example-$i.fr"], range(1, 100))], GandiProvider::ENDPOINT);
+        $provider = new GandiProvider($this->router->client(), 'pat', pages: $guard);
+
+        try {
+            $provider->domains();
+            self::fail('The second page went out over the limit.');
+        } catch (UsageLimitReachedException $e) {
+            self::assertSame('0/day/application/domains', $e->limit?->id());
+        }
+        self::assertCount(1, $this->router->requests, 'the second page never fetched');
     }
 
     /** @param array<string, mixed> $routes */

@@ -20,6 +20,7 @@ use Omnidns\NameserversInterface;
 use Omnidns\RegistrarInterface;
 use Omnisense\Contracts\Policy\Backoff;
 use Omnisense\Contracts\Policy\DeclaresUsagePolicyInterface;
+use Omnisense\Contracts\Policy\PolicyGuard;
 use Omnisense\Contracts\Policy\UsagePolicy;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -46,7 +47,25 @@ final class GandiProvider implements AvailabilityInterface, RegistrarInterface, 
         private readonly string $endpoint = self::ENDPOINT,
         private readonly bool $dryRun = false,
         private readonly ?Backoff $backoff = null,
+        /** the provider's guard for a listing's further pages (Config::guard()); null: not counted */
+        private readonly ?PolicyGuard $pages = null,
     ) {
+    }
+
+    /**
+     * A listing's page: the first as it is (the registry's guard counts the
+     * operation), each further one through the provider's guard
+     * (Config::guard()), checked before it is sent and counted after.
+     *
+     * @template T
+     *
+     * @param \Closure(): T $fetch
+     *
+     * @return T
+     */
+    private function page(int $page, string $operation, \Closure $fetch): mixed
+    {
+        return 1 === $page || null === $this->pages ? $fetch() : $this->pages->call($operation, $fetch);
     }
 
     public function getName(): string
@@ -127,7 +146,7 @@ final class GandiProvider implements AvailabilityInterface, RegistrarInterface, 
     {
         $domains = [];
         for ($page = 1; ; ++$page) {
-            $list = Json::list($this->call('GET', '/domain/domains', ['query' => ['page' => $page, 'per_page' => 100]], 'the domains'));
+            $list = Json::list($this->page($page, 'domains', fn () => $this->call('GET', '/domain/domains', ['query' => ['page' => $page, 'per_page' => 100]], 'the domains')));
             foreach ($list as $item) {
                 if (null !== $fqdn = Json::string($item, 'fqdn')) {
                     $domains[] = $fqdn;

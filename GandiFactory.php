@@ -5,6 +5,7 @@ namespace Omnidns\Gandi;
 use Omnidns\Config;
 use Omnidns\ProviderFactory;
 use Omnidns\ProviderInterface;
+use Omnisense\Contracts\Policy\UsagePolicy;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 /**
@@ -37,6 +38,6 @@ final class GandiFactory extends ProviderFactory
 
     protected function build(Config $c): ProviderInterface
     {
-        return new GandiProvider($this->http, (string) $c->string('token'), $c->string('sharing_id'), $c->string('endpoint') ?? GandiProvider::ENDPOINT, $c->bool('dry_run'), $c->backoff());
+        return new GandiProvider($this->http, (string) $c->string('token'), $c->string('sharing_id'), $c->string('endpoint') ?? GandiProvider::ENDPOINT, $c->bool('dry_run'), $c->backoff(), $c->guard(UsagePolicy::fromFile(GandiProvider::POLICY)));
     }
 }
