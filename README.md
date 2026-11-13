@@ -5,6 +5,13 @@ whether a domain is free and its price, registering and renewing it, the account
 their terms, their name servers, and LiveDNS records - Gandi's API v5, on the application's HTTP
 client (any `symfony/http-client-contracts` implementation).
 
+```sh
+composer require omnisense/omnidns omnidns/gandi
+```
+
+It needs a Gandi account and a personal access token (the `token` option); a registration or a renewal is paid for. Its tests run on recorded answers and need
+none; omnidns's README has a first call on a recorded client.
+
 ```php
 use Omnidns\Gandi\GandiFactory;
 use Omnidns\Registry;
